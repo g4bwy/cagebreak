@@ -39,6 +39,8 @@ struct cg_server;
 	KEYBINDING(KEYBINDING_NOOP, abort)                                         \
 	KEYBINDING(KEYBINDING_SWITCH_OUTPUT,                                       \
 	           screen) /* data.u is the desired output */                      \
+	KEYBINDING(KEYBINDING_SWITCH_VIEW,	                                   \
+	           view) /* data.u is the desired view id */                       \
 	KEYBINDING(KEYBINDING_SWITCH_WORKSPACE,                                    \
 	           workspace) /* data.u is the desired workspace */                \
 	KEYBINDING(KEYBINDING_SWITCH_MODE, mode) /* data.u is the desired mode */  \

@@ -140,7 +140,7 @@ cg-ipc{"event_name":"cycle_outputs","old_output":"eDP-1","old_output_id":1,"new_
 ```
 
 *cycle_views*
-	- Trigger: *next* and *prev* commands
+	- Trigger: *next*, *prev* and *view* commands
 	- JSON
 		- event_name: "cycle_views"
 		- old_view_id: old view id as an integer

@@ -350,6 +350,9 @@ output DP-1 rotate 3
 *time*
 	Display time
 
+*view <n>*
+    Focus window with view ID <n> in current tile
+
 *vsplit*
 	Split current tile vertically
 

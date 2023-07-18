@@ -865,6 +865,23 @@ parse_command(struct cg_server *server, struct keybinding *keybinding,
 			return -1;
 		}
 		keybinding->data.u = outp;
+	} else if(strcmp(action, "view") == 0) {
+		keybinding->action = KEYBINDING_SWITCH_VIEW;
+		char *nview_str = strtok_r(NULL, " ", &saveptr);
+		if(nview_str == NULL) {
+			*errstr = log_error(
+			    "Expected argument for \"view\" action, got none.");
+			return -1;
+		}
+
+		long view_id = strtol(nview_str, NULL, 10);
+		if(view_id < 1) {
+			*errstr = log_error("View ID must be an integer number "
+			                    "larger or equal to 1. Got %ld",
+			                    view_id);
+			return -1;
+		}
+		keybinding->data.u = view_id;
 	} else if(strcmp(action, "workspace") == 0) {
 		keybinding->action = KEYBINDING_SWITCH_WORKSPACE;
 		char *nws_str = strtok_r(NULL, " ", &saveptr);
