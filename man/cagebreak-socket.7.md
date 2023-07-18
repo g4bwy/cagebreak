@@ -525,6 +525,8 @@ switch_ws
 		- new_workspace: new workspace number as an integer
 		- output: name of the output as a string
 		- output_id: id of the output as an integer
+		- focused_tile_id: id of the focused tile in new_workspace as an integer
+		- focused_view_id: id of the focused view in new_workspace as an integer
 
 ```
 workspace 2

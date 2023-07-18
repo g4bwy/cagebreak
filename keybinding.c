@@ -771,15 +771,17 @@ keybinding_switch_ws(struct cg_server *server, uint32_t ws) {
 	}
 	struct cg_output *output = server->curr_output;
 	uint32_t old_ws = server->curr_output->curr_workspace;
+	struct cg_tile *focused_tile = server->curr_output->workspaces[ws]->focused_tile;
 	workspace_focus(output, ws);
-	seat_set_focus(server->seat,
-	               server->curr_output->workspaces[ws]->focused_tile->view);
+	seat_set_focus(server->seat, focused_tile->view);
 	message_printf(server->curr_output, "Workspace %d", ws + 1);
 	ipc_send_event(output->server,
 	               "{\"event_name\":\"switch_ws\",\"old_workspace\":%d,"
-	               "\"new_workspace\":%d,\"output\":\"%s\",\"output_id\":%d}",
+	               "\"new_workspace\":%d,\"output\":\"%s\",\"output_id\":%d,"
+		       "\"focused_tile_id\":%d,\"focused_view_id\":%d}",
 	               old_ws + 1, ws + 1, output->wlr_output->name,
-	               output_get_num(output));
+	               output_get_num(output),
+		       focused_tile->id, (focused_tile->view) ? focused_tile->view->id : 0);
 	return 0;
 }
 
