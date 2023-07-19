@@ -727,6 +727,47 @@ keybinding_cycle_views(struct cg_server *server, bool reverse, bool ipc) {
 }
 
 void
+keybinding_switch_view(struct cg_server *server, uint32_t view_id, bool ipc) {
+	struct cg_workspace *curr_workspace =
+	    server->curr_output->workspaces[server->curr_output->curr_workspace];
+	struct cg_view *current_view = curr_workspace->focused_tile->view;
+
+	struct cg_view *it_view, *next_view = NULL;
+	wl_list_for_each(it_view, &curr_workspace->views, link) {
+		if(it_view->id == view_id && !view_is_visible(it_view)) {
+			next_view = it_view;
+			break;
+		}
+	}
+
+	if(next_view == NULL) {
+		return;
+	}
+
+	seat_set_focus(server->seat, next_view);
+	if(ipc) {
+		int curr_id = -1;
+		int curr_pid = -1;
+		if(current_view != NULL &&
+		   current_view->link.next != curr_workspace->views.next) {
+			curr_id = current_view->id;
+			curr_pid = current_view->impl->get_pid(current_view);
+		}
+		ipc_send_event(
+		    curr_workspace->output->server,
+		    "{\"event_name\":\"cycle_views\",\"old_view_id\":%d,\"old_view_"
+		    "pid\":%d,"
+		    "\"new_view_id\":%d,\"new_view_pid\":%d,\"tile_id\":%d,"
+		    "\"workspace\":%d,\"output\":\"%s\",\"output_id\":%d}",
+		    curr_id, curr_pid, next_view == NULL ? -1 : (int)next_view->id,
+		    next_view == NULL ? -1 : (int)next_view->impl->get_pid(next_view),
+		    next_view->tile->id, curr_workspace->num + 1,
+		    curr_workspace->output->wlr_output->name,
+		    output_get_num(curr_workspace->output));
+	}
+}
+
+void
 keybinding_focus_tile(struct cg_server *server, uint32_t tile_id) {
 	struct cg_output *output = server->curr_output;
 	struct cg_workspace *workspace = output->workspaces[output->curr_workspace];
@@ -1679,6 +1720,9 @@ run_action(enum keybinding_action action, struct cg_server *server,
 		break;
 	case KEYBINDING_CYCLE_OUTPUT:
 		keybinding_cycle_outputs(server, data.b, true);
+		break;
+	case KEYBINDING_SWITCH_VIEW:
+		keybinding_switch_view(server, data.u, true);
 		break;
 	case KEYBINDING_SWITCH_WORKSPACE:
 		keybinding_switch_ws(server, data.u);
